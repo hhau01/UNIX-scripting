@@ -1,0 +1,583 @@
+HENRY AU
+
+#! /bin/csh
+# Create ATM in C-Shell
+
+set attempts = 0
+set checking = 1000
+set saving = 1000
+
+while ( $attempts != 3 )
+	clear
+	echo "*** Welcome To Cal Poly's ATM ***"
+	echo ""
+	echo -n "Please enter your PIN: "
+	set pin = $<
+	if ( $pin == 111 ) then	
+		set cont = 1
+		while ( $cont == 1 )
+			clear
+			echo "*** Welcome To Cal Poly's ATM System ***"
+			echo ""
+			echo "(1) Transfer from checking account to savings account"
+			echo "(2) Transfer from savings account to checking account"
+			echo "(3) Savings account balance"
+			echo "(4) Checking account balance"
+			echo "(5) Withdraw Cash from either account"
+			echo "(6) Exit"
+			echo ""
+			echo -n "==> Please select option (1-6): "
+			set choice = $<
+			switch ($choice)
+			case "1":
+				clear
+				echo "(1) Transfer from checking account to savings account"
+				echo -n "How much would you like to transfer? "
+				set amount = $<
+				if ( $amount <= $checking && $amount > 0 ) then 
+					@ checking = $checking - $amount
+					@ saving = $saving + $amount
+					echo "Transaction completed."
+					echo Checking balance: \$$checking
+					echo Savings balance:  \$$saving
+					echo "Press enter to continue."
+					set pause = $<
+				else 
+					echo "Transaction not completed"
+					echo Current Checking Account Balance: \$$checking
+					echo "Press enter to continue."
+					set pause = $<
+				endif
+			breaksw
+			case "2":
+				clear
+				echo "(2) Transfer from savings account to checking account"
+				echo -n "How much would you like to transfer? "
+				set amount = $<
+				if ($amount <= $saving && $amount > 0 ) then
+					@ saving = $saving - $amount
+					@ checking = $checking + $amount
+					echo "Transaction completed."
+					echo Checking balance: \$$checking
+					echo Savings balance: \$$saving
+					echo "Press enter to continue."
+					set pause = $<
+				else
+					echo "Transaction not completed."
+					echo Current Savings Account Balance: \$$saving
+					echo "Press enter to continue."
+					set pause = $<
+				endif
+			breaksw
+			case "3":
+				clear
+				echo "(3) Savings account balance"
+				echo Balance: \$$saving
+				echo "Press enter to continue."
+				set pause = $<
+			breaksw
+			case "4":
+				clear
+				echo "(4) Checking account balance"
+				echo Balance: \$$checking
+				echo "Press enter to continue."
+				set pause = $<
+			breaksw
+			case "5":
+				clear
+				echo "(5) Withdraw Cash from either account"
+				echo -n "How much would you like to withdraw? "
+				set amount = $<
+				echo "Which account?"
+				echo "(1) Checking Account"
+				echo "(2) Savings Account"
+				set account = $<
+				if ( $account == 1 ) then
+					if ($amount <= $checking && $amount > 0 ) then
+						@ checking = $checking - $amount
+						echo Current Checking Account Balance: \$$checking
+						echo "Press enter to continue."
+						set pause = $<
+					else
+						echo "Transaction not completed."
+						echo Current Checking Account Balance: \$$checking
+						echo "Press enter to continue."
+						set pause = $<
+					endif
+				else if ( $account == 2 ) then
+					if ($amount <= $saving && $amount > 0 ) then
+						@ saving = $saving - $amount
+						echo Current Savings Account Balance: \$$saving
+						echo "Press enter to continue."
+						set pause = $<
+					else
+						echo "Transaction not completed."
+						echo Current Savings Account Balance: \$$saving
+						echo "Press enter to continue."
+						set pause = $<
+					endif
+				else
+					echo "Incorrect account."
+					echo "Press enter to contiue."
+					set pause = $<
+				endif
+			breaksw
+			case "6":
+				echo "Thank you for using the ATM system."
+				exit
+			breaksw
+			endsw
+		end
+	else
+		@ attempts = $attempts + 1
+		if ( $attempts == 3 ) then
+			echo "Too many illegal PINs. Try again later."
+			exit
+		endif
+		clear
+	endif
+end
+
+#! /bin/bash
+# Create ATM in Bourne Again Shell
+
+attempts=0
+checking=1000
+saving=1000
+
+menu () {
+	clear
+	echo "*** Welcome To Cal Poly's ATM System ***"
+	echo ""
+	echo "(1) Transfer from checking account to savings account"
+	echo "(2) Transfer from savings account to checking account"
+	echo "(3) Savings account balance"
+	echo "(4) Checking account balance"
+	echo "(5) Withdraw Cash from either account"
+	echo "(6) Exit"
+	echo ""
+	echo -n "==> Please select option (1-6): "
+	read choice
+	case $choice in
+		"1")
+		checkToSave
+		;;
+		"2") 
+		saveToCheck
+		;;
+		"3") 
+		saveBal
+		;;
+		"4") 
+		checkBal
+		;;
+		"5") 
+		withdraw
+		;;
+		"6") 
+		echo "Thank you for using the ATM system."
+		exit
+		;;
+	esac
+}
+
+checkToSave () {
+	clear
+	echo "(1) Transfer from checking account to savings account"
+	echo -n "How much would you like to transfer? "
+	read amount
+	if (( $(bc <<< "$amount <= $checking && $amount > 0") )); then
+		checking=`echo "$checking - $amount" | bc`
+		saving=`echo "$saving + $amount" | bc`
+		echo "Transaction completed."
+		printf "Checking balance: \$%.2f\n" $checking
+		printf "Savings balance: \$%.2f\n" $saving
+		echo "Press enter to continue."
+		read pause
+	else
+		echo "Transaction not completed."
+		printf "Current Checking Account Balance: \$%.2f\n" $checking
+		echo "Press enter to continue."
+		read pause
+	fi
+}
+
+saveToCheck () {
+	clear
+	echo "(2) Transfer from savings account to checking account"
+	echo -n "How much would you like to transfer? "
+	read amount
+	if (( $(bc <<< "$amount <= $saving && $amount > 0") )); then
+		saving=`echo "$saving - $amount" | bc`
+		checking=`echo "$checking + $amount" | bc`
+		echo "Transaction completed."
+		printf "Checking balance: \$%.2f\n" $checking
+		printf "Savings balance: \$%.2f\n" $saving
+		echo "Press enter to continue."
+		read pause
+	else
+		echo "Transaction not completed."
+		printf "Current Savings Account Balance: \$%.2f\n" $saving
+		echo "Press enter to continue."
+		read pause
+	fi
+}
+
+saveBal () {
+	clear
+	echo "(3) Savings account balance"
+	printf "Balance: \$%.2f\n" $saving
+	echo "Press enter to continue."
+	read pause
+}
+
+checkBal () {
+	clear
+	echo "(4) Checking account balance"
+	printf "Balance: \$%.2f\n" $checking
+	echo "Press enter to continue."
+	read pause
+}
+
+withdraw () {
+	clear
+	echo "(5) Withdraw Cash from either account"
+	echo -n "How much would you like to withdraw? "
+	read amount
+	echo "Which account?"
+	echo "(1) Checking Account"
+	echo "(2) Savings Account"
+	read account
+	if (( $account == 1 )); then
+		if (( $(bc <<< "$amount <= $checking && $amount > 0") )); then
+			checking=`echo "$checking - $amount" | bc`
+			printf "Current Checking Account Balance: \$%.2f\n" $checking
+			echo "Press enter to continue."
+			read pause
+		else
+			echo "Transaction not completed."
+			printf "Current Checking Account Balance: \$%.2f\n" $checking
+			echo "Press enter to continue."
+			read pause
+		fi
+	elif (( $account == 2 )); then
+		if (( $(bc <<< "$amount <= $saving && $amount > 0") )); then
+			saving=`echo "$saving - $amount" | bc`
+			printf "Current Savings Account Balance: \$%.2f\n" $saving
+			echo "Press enter to continue."
+			read pause
+		else
+			echo "Transaction not completed."
+			printf "Current Savings Account Balance: \$%.2f\n" $saving
+			echo "Press enter to continue."
+			read pause
+		fi
+	fi
+}
+
+while (( $attempts != 3 )); do
+	clear
+	echo "*** Welcome to Cal Poly's ATM ***"
+	echo ""
+	echo -n "Please enter your PIN: "
+	read pin
+	if (( $pin == 111 )); then
+		cont=1
+		while (( $cont == 1 )); do
+			menu
+		done
+	else
+		(( attempts++ ))
+		if (( $attempts == 3 )); then
+			echo "Too many illegal PINs. Try again later."
+			exit
+		fi
+		clear
+	fi	
+done
+
+#! /bin/ksh
+# Create ATM in Korn Shell
+
+attempts=0
+checking=1000
+saving=1000
+
+menu () {
+	clear
+	echo "*** Welcome To Cal Poly's ATM System ***"
+	echo ""
+	echo "(1) Transfer from checking account to savings account"
+	echo "(2) Transfer from savings account to checking account"
+	echo "(3) Savings account balance"
+	echo "(4) Checking account balance"
+	echo "(5) Withdraw Cash from either account"
+	echo "(6) Exit"
+	echo ""
+	read "choice?==> Please select option (1-6): "
+	case $choice in
+		"1")
+		checkToSave
+		;;
+		"2") 
+		saveToCheck
+		;;
+		"3") 
+		saveBal
+		;;
+		"4") 
+		checkBal
+		;;
+		"5") 
+		withdraw
+		;;
+		"6") 
+		echo "Thank you for using the ATM system."
+		exit
+		;;
+	esac
+}
+
+checkToSave () {
+	clear
+	echo "(1) Transfer from checking account to savings account"
+	read "amount?How much would you like to transfer? "
+	if (( $(bc <<< "$amount <= $checking && $amount > 0") )) then
+		checking=`echo "$checking - $amount" | bc`
+		saving=`echo "$saving + $amount" | bc`
+		echo "Transaction completed."
+		printf "Checking balance: \$%.2f\n" $checking
+		printf "Savings balance: \$%.2f\n" $saving
+		read "pause?Press enter to continue."
+	else
+		echo "Transaction not completed."
+		printf "Current Checking Account Balance: \$%.2f\n" $checking
+		read "pause?Press enter to continue."
+	fi
+}
+
+saveToCheck () {
+	clear
+	echo "(2) Transfer from savings account to checking account"
+	read "amount?How much would you like to transfer? "
+	if (( $(bc <<< "$amount <= $saving && $amount > 0") )) then
+		saving=`echo "$saving - $amount" | bc`
+		checking=`echo "$checking + $amount" | bc`
+		echo "Transaction completed."
+		printf "Checking balance: \$%.2f\n" $checking
+		printf "Savings balance: \$%.2f\n" $saving
+		read "pause?Press enter to continue."
+	else
+		echo "Transaction not completed."
+		printf "Current Savings Account Balance: \$%.2f\n" $saving
+		read "pause?Press enter to continue."
+	fi
+}
+
+saveBal () {
+	clear
+	echo "(3) Savings account balance"
+	printf "Balance: \$%.2f\n" $saving
+	read "pause?Press enter to continue."
+}
+
+checkBal () {
+	clear
+	echo "(4) Checking account balance"
+	printf "Balance: \$%.2f\n" $checking
+	read "pause?Press enter to continue."
+}
+
+withdraw () {
+	clear
+	echo "(5) Withdraw Cash from either account"
+	read "amount?How much would you like to withdraw? "
+	echo "Which account?"
+	echo "(1) Checking Account"
+	echo "(2) Savings Account "
+	read account
+	if (( $account == 1 )) then
+		if (( $(bc <<< "$amount <= $checking && $amount > 0") )) then
+			checking=`echo "$checking - $amount" | bc`
+			printf "Current Checking Account Balance: \$%.2f\n" $checking
+			read "pause?Press enter to continue."
+		else
+			echo "Transaction not completed."
+			printf "Current Checking Account Balance: \$%.2f\n" $checking
+			read "pause?Press enter to continue."
+		fi
+	elif (( $account == 2 )) then
+		if (( $(bc <<< "$amount <= $saving && $amount > 0") )) then
+			saving=`echo "$saving - $amount" | bc`
+			printf "Current Savings Account Balance: \$%.2f\n" $saving
+			read "pause?Press enter to continue."
+		else
+			echo "Transaction not completed."
+			printf "Current Savings Account Balance: \$%.2f\n" $saving
+			read "pause?Press enter to continue."
+		fi
+	fi
+}
+
+while (( $attempts != 3 )) do
+	clear
+	echo "*** Welcome to Cal Poly's ATM ***"
+	echo ""
+	read "pin?Please enter your PIN: "
+	if (( $pin == 111 )) then
+		cont=1
+		while (( $cont == 1 )) do
+			menu
+		done
+	else
+		(( attempts++ ))
+		if (( $attempts == 3 )) then
+			echo "Too many illegal PINs. Try again later."
+			exit
+		fi
+		clear
+	fi	
+done
+
+#! /bin/zsh
+# Create ATM in Z-Shell
+
+attempts=0
+checking=1000
+saving=1000
+
+menu () {
+	clear
+	print "*** Welcome To Cal Poly's ATM System ***"
+	print ""
+	print "(1) Transfer from checking account to savings account"
+	print "(2) Transfer from savings account to checking account"
+	print "(3) Savings account balance"
+	print "(4) Checking account balance"
+	print "(5) Withdraw Cash from either account"
+	print "(6) Exit"
+	print ""
+	read "choice?==> Please select option (1-6): "
+	case $choice in
+		(1)
+		checkToSave
+		;;
+		(2) 
+		saveToCheck
+		;;
+		(3) 
+		saveBal
+		;;
+		(4) 
+		checkBal
+		;;
+		(5) 
+		withdraw
+		;;
+		(6) 
+		print "Thank you for using the ATM system."
+		exit
+		;;
+	esac
+}
+
+checkToSave () {
+	clear
+	print "(1) Transfer from checking account to savings account"
+	read "amount?How much would you like to transfer? "
+	if (( $(bc <<< "$amount <= $checking && $amount > 0") )) then
+		checking=`echo "$checking - $amount" | bc`
+		saving=`echo "$saving + $amount" | bc`
+		print "Transaction completed."
+		printf "Checking balance: \$%.2f\n" $checking
+		printf "Savings balance: \$%.2f\n" $saving
+		read "pause?Press enter to continue."
+	else
+		print "Transaction not completed."
+		printf "Current Checking Account Balance: \$%.2f\n" $checking
+		read "pause?Press enter to continue."
+	fi
+}
+
+saveToCheck () {
+	clear
+	print "(2) Transfer from savings account to checking account"
+	read "amount?How much would you like to transfer? "
+	if (( $(bc <<< "$amount <= $saving && $amount > 0") )) then
+		saving=`echo "$saving - $amount" | bc`
+		checking=`echo "$checking + $amount" | bc`
+		print "Transaction completed."
+		printf "Checking balance: \$%.2f\n" $checking
+		printf "Savings balance: \$%.2f\n" $saving
+		read "pause?Press enter to continue."
+	else
+		print "Transaction not completed."
+		printf "Current Savings Account Balance: \$%.2f\n" $saving
+		read "pause?Press enter to continue."
+	fi
+}
+
+saveBal () {
+	clear
+	print "(3) Savings account balance"
+	printf "Balance: \$%.2f\n" $saving
+	read "pause?Press enter to continue."
+}
+
+checkBal () {
+	clear
+	print "(4) Checking account balance"
+	printf "Balance: \$%.2f\n" $checking
+	read "pause?Press enter to continue."
+}
+
+withdraw () {
+	clear
+	print "(5) Withdraw Cash from either account"
+	read "amount?How much would you like to withdraw? "
+	print "Which account?"
+	print "(1) Checking Account"
+	print "(2) Savings Account "
+	read account
+	if (( $account == 1 )) then
+		if (( $(bc <<< "$amount <= $checking && $amount > 0") )) then
+			checking=`echo "$checking - $amount" | bc`
+			printf "Current Checking Account Balance: \$%.2f\n" $checking
+			read "pause?Press enter to continue."
+		else
+			print "Transaction not completed."
+			printf "Current Checking Account Balance: \$%.2f\n" $checking
+			read "pause?Press enter to continue."
+		fi
+	elif (( $account == 2 )) then
+		if (( $(bc <<< "$amount <= $saving && $amount > 0") )) then
+			saving=`echo "$saving - $amount" | bc`
+			printf "Current Savings Account Balance: \$%.2f\n" $saving
+			read "pause?Press enter to continue."
+		else
+			print "Transaction not completed."
+			printf "Current Savings Account Balance: \$%.2f\n" $saving
+			read "pause?Press enter to continue."
+		fi
+	fi
+}
+
+while (( $attempts != 3 )) do
+	clear
+	print "*** Welcome to Cal Poly's ATM ***"
+	print ""
+	read "pin?Please enter your PIN: "
+	if (( $pin == 111 )) then
+		cont=1
+		while (( $cont == 1 )) do
+			menu
+		done
+	else
+		(( attempts++ ))
+		if (( $attempts == 3 )) then
+			print "Too many illegal PINs. Try again later."
+			exit
+		fi
+		clear
+	fi	
+done

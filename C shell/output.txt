@@ -1,0 +1,290 @@
+#! /bin/csh
+#Script that asks the user for a number and prints out if it is even or odd
+echo -n 'Please enter a number:'
+set n = $<
+@ x = $n % 2
+if ( $x == 0 ) then
+	echo $n is even.
+else
+	echo $n is odd
+endif
+
+#! /bin/csh
+#Script that asks the user "Are you OK?"
+#If user replies y or Y, then say "glad to hear it" 
+#Else if the user enter n or N then print "sorry that you are not feel good"
+#If the user enters some other character, then print incorrect choice and ask question again.
+while (1)
+	echo -n 'Are you OK?[y\\n]'
+	set ans = $<
+	if ( $ans == "y" || $ans == "Y" ) then
+		echo 'Glad to hear it.'
+	break
+	else if ( $ans == "n" || $ans == "N" ) then
+		echo 'Sorry that you are not feeling good.'
+		break
+	else
+		echo 'Incorrect choice'
+		continue
+	endif
+end
+
+#! /bin/csh
+#a) Asks user for a score. If the score is between 90 and 100, then print"you got A"
+#else if between 80 and 90, then "you got B" and so on. 
+#If less than 60, then "you failed". 
+#If the user enters number not between 0 and 100, then print the error message and exit the script. 
+#b) Modify this script such that the user runs it with a number between 0 and 100 as an argument to the script and not ask the user for the score.
+echo -n 'Enter your score: '
+set s =  $<
+if ( $s >= 90 && $s <= 100 ) then
+	echo 'You got an A.'
+else if ( $s >= 80 && $s < 90 ) then
+	echo 'You got a B.'
+else if ( $s >= 70 && $s < 80 ) then
+	echo 'You got an C.'
+else if ( $s >= 60 && $s < 70 ) then
+	echo 'You got an D.'
+else if ( $s >= 0 && $s < 60 ) then
+	echo 'You failed.'
+else
+	echo 'Please enter score between 0-100.'
+endif
+
+#! /bin/csh
+#a) Asks user for a score. If the score is between 90 and 100, then print"you got A"
+#else if between 80 and 90, then "you got B" and so on. 
+#If less than 60, then "you failed". 
+#If the user enters number not between 0 and 100, then print the error message and exit the script. 
+#b) Modify this script such that the user runs it with a number between 0 and 100 as an argument to the script and not ask the user for the score.
+set s = 96
+echo "Your score is $s."
+if ( $s >= 90 && $s <= 100 ) then
+	echo 'You got an A.'
+else if ( $s >= 80 && $s < 90 ) then
+	echo 'You got a B.'
+else if ( $s >= 70 && $s < 80 ) then
+	echo 'You got an C.'
+else if ( $s >= 60 && $s < 70 ) then
+	echo 'You got an D.'
+else if ( $s >= 0 && $s < 60 ) then
+	echo 'You failed.'
+else
+	echo 'Please enter score between 0-100.'
+endif
+
+#! /bin/csh
+#Script that saves the current date in a variable and then shifts through the different parts/elements of the date using a loop and prints each one out in a separate line.
+set now = `date`
+echo $now
+foreach x ( $now )
+	echo $x
+end
+
+#! /bin/csh
+#Script that uses a switch or case statement (depending on shell) to do the following
+#First ask the user for a color. If they enter anything that begins with bl or Bl, then print the sky color is (whatever the user entered).
+#If the user enters red or yellow, then print the sun is sometimes this color.
+#If the user enters any other color, then enter that the color is not in any of the categories defined.
+echo -n 'Enter a color: '
+set c =  $<
+switch ( $c)
+	case Bl*:
+	case bl*:
+		echo "The sky color is $c."
+	breaksw
+	case "red":
+	case "yellow":
+		echo "The sun is sometimes this color."
+	breaksw
+	default:
+		echo "$c is not in any of the categories defined."
+	breaksw
+endsw
+
+#! /bin/csh
+#Simple while loop which prints out numbers from 0 through 9 using the @ operator and a variable.
+#In case of Bourne shell, use the expr command to increment the loop variable
+set x = 0
+while ( $x < 10 )
+	echo $x
+	@ x ++
+end
+
+#! /bin/csh
+#Script called days which is run as follows from command line:
+#days Monday Tuesday Wednesday Thursday Friday Saturday Sunday
+#and prints it removing the first day each iteration until none
+set count = $#
+while ( $count >= 1 )
+	echo $*
+	shift
+	@ count --
+end
+
+#! /bin/csh
+#Script that takes in two arguments that are positive integers.
+#The script should figure out which of the two integers is smaller
+#and should use that to figure out the greatest common divisor (GCD)
+#of the two integers and print it out. Also, figure out the lowest
+#common multiple (LCM) of the two integers and print it out.
+if ( $1 > 0 && $2 > 0 ) then
+	if ( $1 > $2 ) then
+		set small = $2
+		set big = $1
+	else
+		set small = $1
+		set big = $2
+	endif
+else
+	echo 'Please enter a positive integer.'
+	exit
+endif
+
+#gcd
+set a = $big
+set b = $small
+set rem = 1
+while ( $rem !=  0 )
+	@ rem = $a % $b
+	set a = $b
+	set b = $rem
+end
+echo "GCD of $1 and $2 is $a"
+
+set a = $big
+set b = $small
+@ p = $a * $b
+while ( $b != 0 )
+	@ r = $a % $b
+	set a = $b
+	set b = $r
+end
+@ l = $p / $a
+echo "LCM of $1 and $2 is $l"
+
+#! /bin/csh
+#Function called do_square that uses the first argument/parameter to calculate
+#the square of the integer the user enters when running the script
+if ( $# == 1 ) then
+	@ x = $1 * $1
+	echo $x
+endif
+
+#! /bin/csh
+#Script that presents user with a menu
+#Add the numbers(enter a or A)
+#Subtract the numbers(enter s or S)
+#Multiply the numbers(enter m or M)
+#Divide the numbers(enter d or D)
+#Exit(enter e or E)
+#If user enters any other char, print error saying 
+#It is not a choice and ask user to select again until correct one is chosen
+#Once operation is done, ask user if they want to do another operation on
+#the same two ints or do another operation with two diff ints or exit.
+#Also, when you run the script, provide two ints as command line args.
+#The beginning of your script should have an if statement that checks how
+#many args are coming in and present a few statements about Usage of the
+#script if the number of args is not 2.
+if ( $# < 2 ) then
+	echo "ERROR: Only two arguments are acceptable."
+	echo "EXAMPLE: ./menu 1 2"
+	exit
+endif
+set a = $1
+set b = $2
+set cont = 1
+while ( $cont == 1 )
+	echo "Welcome to Arithmetic Menu!"
+	echo "Add the numbers(enter a or A)"
+	echo "Subtract the numbers(enter s or S)"
+	echo "Multiply the numbers(enter m or M)"
+	echo "Divide the numbers(enter d or D)"
+	echo "Exit(enter e or E)"
+	set n = $<
+	switch ( $n )
+		case "a":
+		case "A":
+			@ x = $a + $b
+			echo $x
+			breaksw
+		case "s":
+		case "S":
+			@ x = $a - $b
+			echo $x
+			breaksw
+		case "m":
+		case "M":
+			@ x = $a * $b
+			echo $x
+			breaksw
+		case "d":
+		case "D":
+			if ( $b == 0) then
+				echo 'Cannot divide by 0.'
+				break	
+			else
+				@ x = $a / $b
+				echo $x
+			endif
+			breaksw
+		case "e":
+		case "E":
+			exit
+			breaksw
+		default:
+			echo "That is not a choice. Please select again."
+			breaksw
+	endsw
+	echo "What would you like to do?"
+	echo "Do another operation on the same two integers(enter s or S)"
+	echo "Do another operation on two different integers(enter d or D)"
+	echo "Exit(enter any other key)"
+	set m = $<
+	switch ( $m )
+		case "s":
+		case "S":
+			continue
+			breaksw
+		case "d":
+		case "D":
+			echo "Please enter two integers"
+			echo -n "Enter first integers: "
+			set a = $<
+			echo -n "Enter second integers: "
+			set b = $<
+			breaksw
+		default:
+			echo "Goodbye"
+			exit
+			breaksw
+	endsw
+end
+
+#! /bin/csh
+#Script that asks for an int between 1 and 10
+#and prints out sum from 1 through the number entered
+#and also the product from 1 through the number entered (factorial)
+#Example: user enters 4, script should print sum 10 (1+2+3+4) and 24(1*2*3*4)
+echo -n "Please enter a number between 1 and 10: "
+set n = $<
+if ( $n < 1 || $n > 10 ) then
+	echo "Please choose a number between 1 and 10."
+	exit
+endif
+set count = 1
+set sum = 0
+set prod = 1
+set str1 = "1"
+set str2 = "1"
+while ( $count <= $n )
+	@ sum = $sum + $count
+	@ prod = $prod * $count
+	if ( $count > 1 ) then
+		set str1 = "$str1 + $count"
+		set str2 = "$str2 * $count"
+	endif
+	@ count = $count + 1
+end
+echo "$sum ($str1)"
+echo "$prod ($str2)"
